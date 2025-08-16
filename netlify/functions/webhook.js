@@ -24,10 +24,10 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const vapiSecret = process.env.VAPI_KEY;
+    const vapiSecret = process.env.VAPI_WEBHOOK_SECRET;
     
     if (!vapiSecret) {
-      console.error('VAPI_KEY not found');
+      console.error('VAPI_WEBHOOK_SECRET not found');
       return {
         statusCode: 500,
         body: JSON.stringify({ message: 'Server configuration error' })

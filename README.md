@@ -2,12 +2,10 @@
 A Next.js application that processes VAPI webhooks with Firebase storage and signature verification.
 
 ## Quick Deploy
-1. 1.
-   Clone and push to GitHub
-2. 2.
-   Deploy to Netlify - connect your GitHub repo
-3. 3.
-   Set environment variables in Netlify:
+1. Clone and push to GitHub
+2. Deploy to Netlify - connect your GitHub repo
+3. Set environment variables in Netlify:
+   
    ```
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_k
    ey
@@ -24,6 +22,7 @@ A Next.js application that processes VAPI webhooks with Firebase storage and sig
    r_measurement_id
    VAPI_KEY=your_vapi_secret_key
    ```
+   
 ## Webhook Endpoint
 URL: https://your-app.netlify.app/api/webhook Method: POST Headers: x-vapi-signature (HMAC SHA-256)
 

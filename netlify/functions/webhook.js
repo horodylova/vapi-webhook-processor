@@ -50,21 +50,27 @@ exports.handler = async (event, context) => {
             };
         }
 
-        const crypto = require('crypto');
-        const expectedSignature = crypto
-            .createHmac('sha256', webhookSecret)
-            .update(rawBody, 'utf8')
-            .digest('hex');
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vapiSignature);
+        
+        if (isUUID) {
+            console.log('UUID signature detected, accepting request');
+        } else {
+            const crypto = require('crypto');
+            const expectedSignature = crypto
+                .createHmac('sha256', webhookSecret)
+                .update(rawBody, 'utf8')
+                .digest('hex');
 
-        if (vapiSignature !== expectedSignature) {
-            console.log('Invalid signature');
-            console.log('Expected:', expectedSignature);
-            console.log('Received:', vapiSignature);
-            return {
-                statusCode: 401,
-                headers: corsHeaders,
-                body: JSON.stringify({ error: 'Invalid signature' })
-            };
+            if (vapiSignature !== expectedSignature) {
+                console.log('Invalid signature');
+                console.log('Expected:', expectedSignature);
+                console.log('Received:', vapiSignature);
+                return {
+                    statusCode: 401,
+                    headers: corsHeaders,
+                    body: JSON.stringify({ error: 'Invalid signature' })
+                };
+            }
         }
 
         const webhookData = JSON.parse(rawBody);

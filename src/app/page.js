@@ -75,7 +75,7 @@ export default function Home() {
 
       <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#f0f8ff', borderRadius: '5px' }}>
         <h3>🔧 For Developers</h3>
-        <p><strong>Webhook URL:</strong> <code>{mounted ? window.location.origin : 'https://vapi-webhook-processor.netlify.app'}/api/webhook</code></p>
+        <p><strong>Webhook URL:</strong> <code>https://vapi-webhook-processor.netlify.app/api/webhook</code></p>
         <p><strong>Method:</strong> POST</p>
         <p><strong>Headers:</strong> x-vapi-signature (HMAC SHA-256)</p>
         <p><strong>Features:</strong> ✅ Signature verification ✅ Idempotency ✅ Firebase storage</p>

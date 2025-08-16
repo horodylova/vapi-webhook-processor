@@ -20,10 +20,9 @@ const initializeFirebase = () => {
         throw new Error(`Missing Firebase environment variables: ${missingVars.join(', ')}`);
     }
     
-    // Fix the private key formatting - ensure proper newlines
     let privateKey = process.env.FIREBASE_PRIVATE_KEY;
     if (!privateKey.includes('\n')) {
-        // If the key doesn't have newlines, it might be base64 encoded or improperly formatted
+    
         privateKey = privateKey.replace(/\\n/g, '\n');
     }
     
@@ -36,7 +35,7 @@ const initializeFirebase = () => {
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        // Add project ID explicitly
+
         projectId: process.env.FIREBASE_PROJECT_ID
     });
     
@@ -50,7 +49,6 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Methods': 'POST, OPTIONS'
     };
 
-    // Handle CORS preflight
     if (event.httpMethod === 'OPTIONS') {
         return {
             statusCode: 200,
@@ -71,7 +69,7 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Get raw body and signature
+   
         const rawBody = event.body;
         const vapiSignature = event.headers['x-vapi-signature'] || event.headers['X-Vapi-Signature'];
         
@@ -87,7 +85,6 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Verify webhook signature
         const webhookSecret = process.env.VAPI_WEBHOOK_SECRET;
         if (!webhookSecret) {
             console.log('VAPI_WEBHOOK_SECRET not configured');
@@ -98,11 +95,10 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Check if signature is UUID format (some VAPI webhooks use UUID)
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vapiSignature);
         
         if (!isUUID) {
-            // Verify HMAC signature
+         
             const expectedSignature = crypto
                 .createHmac('sha256', webhookSecret)
                 .update(rawBody || '', 'utf8')
@@ -122,7 +118,7 @@ exports.handler = async (event, context) => {
             console.log('UUID signature detected, accepting request');
         }
 
-        // Parse webhook data
+
         let webhookData;
         try {
             webhookData = JSON.parse(rawBody || '{}');
@@ -137,7 +133,6 @@ exports.handler = async (event, context) => {
 
         console.log('Webhook data:', JSON.stringify(webhookData, null, 2));
 
-        // Initialize Firebase
         try {
             initializeFirebase();
         } catch (firebaseError) {
@@ -149,14 +144,12 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // Store webhook data
         const db = admin.firestore();
         const webhookId = `${webhookData.call?.id || 'unknown'}_${Date.now()}`;
         
         try {
             const docRef = db.collection('webhooks').doc(webhookId);
             
-            // Check for duplicate (optional - remove if not needed)
             const existingDoc = await docRef.get();
             
             if (existingDoc.exists) {
@@ -168,7 +161,6 @@ exports.handler = async (event, context) => {
                 };
             }
 
-            // Store the webhook data
             await docRef.set({
                 ...webhookData,
                 timestamp: admin.firestore.FieldValue.serverTimestamp(),

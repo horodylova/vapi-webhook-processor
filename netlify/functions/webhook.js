@@ -1,7 +1,6 @@
 const admin = require('firebase-admin');
 const crypto = require('crypto');
 
-// Initialize Firebase Admin outside the handler for better performance
 let firebaseInitialized = false;
 
 const initializeFirebase = () => {

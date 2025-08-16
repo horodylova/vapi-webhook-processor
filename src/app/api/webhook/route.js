@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createHmac } from 'crypto';
 import { db } from '../../../lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 
 export async function POST(request) {
   try {
@@ -32,7 +32,10 @@ export async function POST(request) {
     
     await setDoc(docRef, {
       callId: callId,
+      call: requestBody.call,
+      type: requestBody.type,
       data: requestBody,
+      timestamp: Timestamp.now(),
       processedAt: new Date().toISOString(),
       signature: vapiSignature
     });

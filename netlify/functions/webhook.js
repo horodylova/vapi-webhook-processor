@@ -79,6 +79,24 @@ exports.handler = async (event, context) => {
         const admin = require('firebase-admin');
         
         if (!admin.apps.length) {
+            const requiredEnvVars = [
+                'FIREBASE_PROJECT_ID',
+                'FIREBASE_PRIVATE_KEY_ID', 
+                'FIREBASE_PRIVATE_KEY',
+                'FIREBASE_CLIENT_EMAIL',
+                'FIREBASE_CLIENT_ID'
+            ];
+            
+            const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+            if (missingVars.length > 0) {
+                console.error('Missing Firebase environment variables:', missingVars);
+                return {
+                    statusCode: 500,
+                    headers: corsHeaders,
+                    body: JSON.stringify({ error: 'Firebase configuration incomplete' })
+                };
+            }
+            
             const serviceAccount = {
                 type: "service_account",
                 project_id: process.env.FIREBASE_PROJECT_ID,

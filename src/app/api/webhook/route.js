@@ -10,7 +10,7 @@ export async function POST(request) {
     const vapiSignature = request.headers.get('x-vapi-signature');
     
     const hmac = createHmac('sha256', vapiSecret);
-    const generatedSignature = hmac.update(rawBody, 'utf8').digest('hex');
+    const generatedSignature = 'sha256=' + hmac.update(rawBody, 'utf8').digest('hex');
     
     if (vapiSignature !== generatedSignature) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
